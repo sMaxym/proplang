@@ -19,7 +19,7 @@ The following program reads the value for good_weather proposition
 from the input, sets value of proposition good_mood to true calculates the value for proposition go_outside
 as the conjunction of the previous propositions and outputs an inverted result.
 ```php
-in good_weather, good_mood = T,
+in good_weather, good_mood := T,
 go_outside := good_weather ^ good_mood,
 out ~go_outside
 ```
