@@ -7,7 +7,7 @@
                           'out'<formulae>   |
                           <prop>:=<formulae>
 <formulae>          ::=   '('<formulae>'^'<formulae>')'  |
-                          '('<formulae>'v'<formulae>')'  |
+                          '('<formulae>'+'<formulae>')'  |
                           '('<formulae>'=>'<formulae>')' |
                           '('<formulae>'<=>'<formulae>')'|
                           '~'<formulae> | <prop> | '0' | '1' | 'F' | 'T' | 'false' | 'true'
