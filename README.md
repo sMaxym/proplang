@@ -4,7 +4,7 @@
 ```java
 <program>           ::=   <exp>','<program> | <exp>
 <exp>               ::=   'in'<prop>    |
-                          'out'<prop>   |
+                          'out'<formulae>   |
                           <prop>:=<formulae>
 <formulae>          ::=   '('<formulae>'^'<formulae>')'  |
                           '('<formulae>'v'<formulae>')'  |
