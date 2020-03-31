@@ -8,7 +8,7 @@ Trie::Trie()
 
 void Trie::insert(const char &mark)
 {
-    root_->add_edge(mark);
+    cursor_->add_edge(mark);
 }
 
 void Trie::move_cursor(const char &mark)

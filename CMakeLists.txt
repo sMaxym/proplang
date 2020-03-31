@@ -5,4 +5,4 @@ project(PropLang LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(PropLang main.cpp trie.cpp trie.h node.cpp node.h)
+add_executable(PropLang main.cpp trie.cpp trie.h node.cpp node.h syntax.cpp syntax.h)
