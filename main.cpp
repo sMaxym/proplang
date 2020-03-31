@@ -5,6 +5,8 @@
 #include <map>
 #include <stdexcept>
 
+#include "trie.h"
+
 const std::string WHITESPACE = " \n\r\t\f\v";
 
 // https://www.techiedelight.com/trim-string-cpp-remove-leading-trailing-spaces/
@@ -12,41 +14,70 @@ std::string ltrim(const std::string& s);
 std::string rtrim(const std::string& s);
 std::string trim(const std::string& s);
 
+// parsing => handling / in different function
+    // output expressions should be without triling whitespaces in proper form
 void expressions(const std::string &program, std::vector<std::string> &exps);
-std::string proposition(std::string toparse);
 template<typename Key, typename Value>
 int execute_expression(const std::string &expression, std::map<Key, Value> &props);
+
+std::string proposition(std::string toparse);
 template<typename Key, typename Value>
 void read_proposition(const std::string &proposition, std::map<Key, Value> &props);
 
+std::vector<std::string> formula(std::string toparse);
+std::vector<std::string> formula2RPN(const std::vector<std::string> &formula);
+
+
+std::vector<std::string> parse_words(const std::string& program);
+bool consist(const std::string &word, const std::string &sub_str);
+
+
+
 int main(int argc, char** argv)
 {
-    if (argc != 2)
-    {
-        std::cout << "Proper *.prop file is required as input" << std::endl;
-        return 1;
-    }
+//    if (argc != 2)
+//    {
+//        std::cout << "Proper *.prop file is required as input" << std::endl;
+//        return 1;
+//    }
 
-    std::ifstream file_in(argv[1], std::fstream::in);
-    std::string prg( (std::istreambuf_iterator<char>(file_in)), (std::istreambuf_iterator<char>()) );
-    file_in.close();
+//    std::ifstream file_in(argv[1], std::fstream::in);
+//    std::string prg( (std::istreambuf_iterator<char>(file_in)), (std::istreambuf_iterator<char>()) );
+//    file_in.close();
 
-    std::vector<std::string> exps;
-    std::map<std::string, int> props;
+//    Trie t;
+//    std::cout << t.cursor_value() << std::endl;
+//    t.insert(':');
+//    t.insert('(');
+//    t.move_cursor(':');
+//    std::cout << t.cursor_value() << std::endl;
+//    t.insert('=');
+//    t.move_cursor('=');
+//    std::cout << t.cursor_value() << std::endl;
 
-    expressions(prg, exps);
-    for (const auto &exp: exps)
-    {
-        execute_expression(exp, props);
-    }
 
-    for (auto it = props.begin(); it != props.end(); ++it)
-    {
-        std::cout << it->first << " " << it->second << std::endl;
-    }
+//    Node n("value");
+
 
     return 0;
 }
+
+bool consist(const std::string &word, const std::string &sub_word)
+{
+    return word.find(sub_word) != std::string::npos;
+}
+
+std::vector<std::string> parse_words(const std::string& program)
+{
+    std::vector<std::string> words;
+    std::string buffer = "";
+    return     std::vector<std::string>();
+}
+
+
+
+
+
 
 std::string ltrim(const std::string& s)
 {
@@ -64,6 +95,11 @@ std::string trim(const std::string& s)
 {
     return rtrim(ltrim(s));
 }
+
+
+
+
+
 
 void expressions(const std::string &program, std::vector<std::string> &exps)
 {
@@ -120,26 +156,52 @@ void read_proposition(const std::string &proposition, std::map<Key, Value> &prop
     throw std::invalid_argument("Invalid proposition value");
 }
 
+//std::vector<std::string> formula(std::string toparse)
+//{
+//    std::string PROP_SYMB = "_0987654321abcdefghijklmnopqrstvuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//    std::vector<std::string> formula;
+//    std::string buffer = "";
+//    toparse = trim(toparse);
+//    for (const char &c: toparse)
+//    {
+//        if (PROP_SYMB.find(c) == std::string::npos)
+//        {
+
+//        }
+//    }
+//}
+
 // todo: instread of int call exception
 template<typename Key, typename Value>
 int execute_expression(const std::string &expression, std::map<Key, Value> &props)
 {
     std::string buffer = "", operand_a = "", operand_b = "", toparse;
-    for (auto it = expression.begin(); it != expression.end(); ++it)
+    std::vector<std::string> formula_infix, RPN;
+    size_t keyword_index = 0;
+
+    // IN
+    keyword_index = expression.find("in");
+    if (keyword_index != std::string::npos)
     {
-        buffer += *it;
-        if (buffer == "in")
-        {
-            toparse = std::string(std::next(it), expression.end());
-            operand_a = proposition(toparse);
-            read_proposition(operand_a, props);
-            break;
-        }
-        if (buffer == "out")
-        {
-            break;
-        }
+        toparse = expression.substr(keyword_index + 2, expression.size() - 2);
+        // parsing
+        operand_a = proposition(toparse);
+        // handling
+        read_proposition(operand_a, props);
     }
+
+    // OUT
+    keyword_index = expression.find("out");
+    if (keyword_index != std::string::npos)
+    {
+        toparse = expression.substr(keyword_index + 3, expression.size() - 3);
+        // parsing
+        formula_infix = formula(toparse);
+        // handling
+        RPN = formula2RPN(formula_infix);
+    }
+
+
     return 0;
 }
 
