@@ -36,7 +36,10 @@ int main(int argc, char** argv)
     keyw.push_back(",");
     Trie t = build_syntax(keyw);
 
-    std::cout << t.cursor_value() << std::endl;
+    std::string avail = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_";
+    std::cout << is_proposition("maxim_shumakov02", avail) << std::endl;
+    std::cout << is_proposition("hello4?_", avail) << std::endl;
+    std::cout << is_proposition("AS0Q", avail) << std::endl;
 
     return 0;
 }
