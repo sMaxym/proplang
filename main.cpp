@@ -5,14 +5,8 @@
 #include <map>
 #include <stdexcept>
 
+#include "str_trim.h"
 #include "syntax.h"
-
-const std::string WHITESPACE = " \n\r\t\f\v";
-
-// https://www.techiedelight.com/trim-string-cpp-remove-leading-trailing-spaces/
-std::string ltrim(const std::string& s);
-std::string rtrim(const std::string& s);
-std::string trim(const std::string& s);
 
 int main(int argc, char** argv)
 {
@@ -26,7 +20,9 @@ int main(int argc, char** argv)
     std::string prg( (std::istreambuf_iterator<char>(file_in)), (std::istreambuf_iterator<char>()) );
     file_in.close();
 
-    std::vector<std::string> keyw;
+    const std::string avail = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_";
+
+    std::vector<std::string> keyw, parsed;
     keyw.push_back("<=>");
     keyw.push_back("in");
     keyw.push_back("=>");
@@ -34,29 +30,56 @@ int main(int argc, char** argv)
     keyw.push_back("<>");
     keyw.push_back("out");
     keyw.push_back(",");
+    keyw.push_back("(");
+    keyw.push_back(")");
+    keyw.push_back("~");
+    keyw.push_back("+");
+    keyw.push_back("^");
     Trie t = build_syntax(keyw);
 
-    std::string avail = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_";
-    std::cout << is_proposition("maxim_shumakov02", avail) << std::endl;
-    std::cout << is_proposition("hello4?_", avail) << std::endl;
-    std::cout << is_proposition("AS0Q", avail) << std::endl;
+
+    std::string prop = "", buffer = "";
+    for (const char &c: prg)
+    {
+        if (t.has_edge(c))
+        {
+            t.move_cursor(c);
+            if (buffer.empty())
+            {
+                buffer = prop;
+            }
+            buffer += c;
+        }
+        else
+        {
+            t.reset_cursor();
+            if (!buffer.empty())
+            {
+                prop = buffer;
+                buffer.clear();
+            }
+            prop += c;
+        }
+        if (t.is_leaf())
+        {
+            buffer.clear();
+            prop = trim(prop);
+            if (!prop.empty())
+            {
+                parsed.push_back(prop);
+                prop.clear();
+            }
+            parsed.push_back(t.cursor_value());
+            t.reset_cursor();
+        }
+    }
+    prop = trim(prop);
+    parsed.push_back(prop);
+
+    for (const std::string &word: parsed)
+    {
+        std::cout << word << std::endl;
+    }
 
     return 0;
-}
-
-std::string ltrim(const std::string& s)
-{
-    size_t start = s.find_first_not_of(WHITESPACE);
-    return (start == std::string::npos) ? "" : s.substr(start);
-}
-
-std::string rtrim(const std::string& s)
-{
-    size_t end = s.find_last_not_of(WHITESPACE);
-    return (end == std::string::npos) ? "" : s.substr(0, end + 1);
-}
-
-std::string trim(const std::string& s)
-{
-    return rtrim(ltrim(s));
 }

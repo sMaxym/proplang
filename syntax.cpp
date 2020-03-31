@@ -1,4 +1,5 @@
 #include "syntax.h"
+#include "str_trim.h"
 
 Trie build_syntax(const std::vector<std::string> &keywords)
 {
@@ -16,6 +17,12 @@ Trie build_syntax(const std::vector<std::string> &keywords)
         syntax_trie.reset_cursor();
     }
     return syntax_trie;
+}
+
+std::vector<std::string> parse_propositions(const std::string &toparse)
+{
+    std::string props = trim(toparse);
+
 }
 
 bool is_proposition(const std::string &prop, const std::string &avail)
